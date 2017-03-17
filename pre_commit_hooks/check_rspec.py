@@ -11,15 +11,15 @@ def check_rspec(argv=None):
     args = parser.parse_args(argv)
 
     retval = 0
+    specs_to_run = []
     for filename in args.filenames:
-        spec_to_run = None
         if filename[-3:] == '.rb' and filename[:8] == 'recipes/':
-            spec_to_run = 'spec/unit/recipes/{}_spec.rb'.format(filename[8:-3])
+            specs_to_run.append('spec/unit/recipes/{}_spec.rb'.format(filename[8:-3]))
         if filename[-3:] == '.rb' and filename[:18] == 'spec/unit/recipes/':
-            spec_to_run = filename
-        if spec_to_run and call(['rspec', spec_to_run]) != 0:
-            print('{0}: Failed to rspec recipe.'.format(filename))
-            retval = 1
+            specs_to_run.append(filename)
+    if len(specs_to_run) and call(['rspec'] + specs_to_run) != 0:
+        print('Failed to rspec recipe.')
+        retval = 1
     return retval
 
 
