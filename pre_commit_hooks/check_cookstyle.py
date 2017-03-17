@@ -4,6 +4,7 @@ import argparse
 import sys
 from subprocess import call
 
+
 def check_cookstyle(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='cookstyle filenames to check.')
