@@ -3,22 +3,23 @@ from __future__ import print_function
 import argparse
 import sys
 
-import util
+from pre_commit_hooks.util import cmd_output
 
 
-def main(argv=None):
+def is_on_branch(protected):
+    branch = cmd_output('git', 'symbolic-ref', 'HEAD')
+    chunks = branch.strip().split('/')
+    return '/'.join(chunks[2:]) == protected
+
+
+def main(argv=[]):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-b', default='master', help='branch to disallow commits to')
-    parser.add_argument('filenames', nargs='*', help='filenames to check.')
+    parser.add_argument(
+        '-b', '--branch', default='master', help='branch to disallow commits to')
     args = parser.parse_args(argv)
 
-    retval = 0
-    branch = util.cmd_output('git', 'symbolic-ref', 'HEAD')
-    chunks = branch.strip().split('/')
-    if chunks[2] == args.b:
-        retval = -1
-    return retval
+    return int(is_on_branch(args.branch))
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main(sys.argv))
